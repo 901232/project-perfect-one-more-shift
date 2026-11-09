@@ -5,8 +5,8 @@ const fonts={head:'Trebuchet MS',body:'Segoe UI',bold:'Segoe UI',mono:'Consolas'
 function boxStyle(b){return `left:${b[0]}px;top:${b[1]}px;width:${b[2]-b[0]}px;height:${b[3]-b[1]}px;`;}
 function nativeElement(e,i,page){
  if(e.type==='text'){
-  if((e.y===1058||e.y===707)&&e.x===64)return '';
-  const meta=e.y<90||e.y===1058||e.y===707;
+  if(e.x===64&&/HISTORY.*SKIP.*AUTO/.test(e.text))return '';
+  const meta=e.y<90||/^\d{2} \/ \d{2}$/.test(e.text);
   const tag=e.kind==='head'&&e.size>=46?'h2':'p';
   return `<${tag} class="element text ${e.kind} ${meta?'page-meta':''}" style="left:${e.x}px;top:${e.y+Math.round(e.size*.15)}px;width:${Math.min(e.w,1600-e.x-20)}px;font-size:${e.size}px;line-height:${e.step}px;color:${e.color}">${e.lines.map(esc).join('<br> ')}</${tag}>`;
  }
@@ -15,7 +15,7 @@ function nativeElement(e,i,page){
  return `<span class="element shape" aria-hidden="true" style="${boxStyle(e.box)}background:${e.fill||'transparent'};border:${e.outline?e.width+'px solid '+e.outline:'0'};border-radius:${e.type==='ellipse'?'50%':(e.radius||0)+'px'}"></span>`;
 }
 function resize(){document.querySelectorAll('.canvas-wrap').forEach(w=>{const scale=w.clientWidth/1600;w.style.height=Number(w.dataset.height||1131)*scale+'px';w.firstElementChild.style.transform=`scale(${scale})`;});}
-fetch('layout.json?v=checked-6').then(r=>{if(!r.ok)throw Error('Content could not be loaded');return r.json();}).then(pages=>{
+fetch('layout.json?v=examples-7').then(r=>{if(!r.ok)throw Error('Content could not be loaded');return r.json();}).then(pages=>{
  contents.innerHTML=pages.map((p,i)=>`<a href="#section-${i+1}">${String(i+1).padStart(2,'0')} / ${esc(p.label)}</a>`).join('');
  reading.innerHTML=pages.map((p,i)=>{
   const links=p.links.map(([label,url])=>`<a href="${esc(url)}" ${url.startsWith('#')?'':'target="_blank" rel="noopener"'}>${esc(label)} ↗</a>`).join('');
