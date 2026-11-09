@@ -15,7 +15,7 @@ function nativeElement(e,i,page){
  return `<span class="element shape" aria-hidden="true" style="${boxStyle(e.box)}background:${e.fill||'transparent'};border:${e.outline?e.width+'px solid '+e.outline:'0'};border-radius:${e.type==='ellipse'?'50%':(e.radius||0)+'px'}"></span>`;
 }
 function resize(){document.querySelectorAll('.canvas-wrap').forEach(w=>{const scale=w.clientWidth/1600;w.style.height=1131*scale+'px';w.firstElementChild.style.transform=`scale(${scale})`;});}
-fetch('layout.json').then(r=>{if(!r.ok)throw Error('Content could not be loaded');return r.json();}).then(pages=>{
+fetch('layout.json?v=editorial-2').then(r=>{if(!r.ok)throw Error('Content could not be loaded');return r.json();}).then(pages=>{
  contents.innerHTML=pages.map((p,i)=>`<a href="#section-${i+1}">${String(i+1).padStart(2,'0')} / ${esc(p.label)}</a>`).join('');
  reading.innerHTML=pages.map((p,i)=>{
   const links=p.links.map(([label,url])=>`<a href="${esc(url)}" ${url.startsWith('#')?'':'target="_blank" rel="noopener"'}>${esc(label)} ↗</a>`).join('');
