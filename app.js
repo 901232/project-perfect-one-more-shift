@@ -15,9 +15,10 @@ function nativeElement(e,i,page){
  return `<span class="element shape" aria-hidden="true" style="${boxStyle(e.box)}background:${e.fill||'transparent'};border:${e.outline?e.width+'px solid '+e.outline:'0'};border-radius:${e.type==='ellipse'?'50%':(e.radius||0)+'px'}"></span>`;
 }
 function resize(){document.querySelectorAll('.canvas-wrap').forEach(w=>{const scale=w.clientWidth/1600;w.style.height=Number(w.dataset.height||1131)*scale+'px';w.firstElementChild.style.transform=`scale(${scale})`;});}
-fetch('layout.json?v=restored-10').then(r=>{if(!r.ok)throw Error('Content could not be loaded');return r.json();}).then(pages=>{
+fetch('layout.json?v=focused-11').then(r=>{if(!r.ok)throw Error('Content could not be loaded');return r.json();}).then(pages=>{
  contents.innerHTML=pages.map((p,i)=>`<a href="#section-${i+1}">${String(i+1).padStart(2,'0')} / ${esc(p.label)}</a>`).join('');
  reading.innerHTML=pages.map((p,i)=>{
+  const designed=renderDesigned(p,i);if(designed)return designed;
   const links=p.links.map(([label,url])=>`<a href="${esc(url)}" ${url.startsWith('#')?'':'target="_blank" rel="noopener"'}>${esc(label)} ↗</a>`).join('');
   let overlays=i===0?'<a class="native-source" style="left:108px;top:351px;width:289px;height:54px" href="#section-2" aria-label="Begin reading the project">BEGIN SHIFT</a>':'';
   const sourceHeads=p.elements.filter(e=>e.type==='text'&&['OPEN SOURCE  >','SOURCE DETAILS  >'].includes(e.text));
@@ -32,3 +33,4 @@ fetch('layout.json?v=restored-10').then(r=>{if(!r.ok)throw Error('Content could 
 document.querySelector('#contents-button').onclick=()=>{contents.hidden=!contents.hidden;document.querySelector('#contents-button').setAttribute('aria-expanded',String(!contents.hidden));};
 contents.onclick=e=>{if(e.target.closest('a'))contents.hidden=true;};
 document.querySelector('#close-zoom').onclick=()=>zoom.close();
+
