@@ -7,7 +7,7 @@ function nativeElement(e,i,page){
  if(e.type==='text'){
   if(e.y===1058&&e.x===64)return '';
   const meta=e.y<90||e.y===1058;
-  const tag=e.kind==='head'&&e.size>=60?'h2':'p';
+  const tag=e.kind==='head'&&e.size>=46?'h2':'p';
   return `<${tag} class="element text ${e.kind} ${meta?'page-meta':''}" style="left:${e.x}px;top:${e.y+Math.round(e.size*.15)}px;width:${Math.min(e.w,1600-e.x-20)}px;font-size:${e.size}px;line-height:${e.step}px;color:${e.color}">${e.lines.map(esc).join('<br> ')}</${tag}>`;
  }
  if(e.type==='image')return `<button class="element art" style="${boxStyle(e.box)}" data-art="${esc(e.path)}" aria-label="Enlarge original image ${i+1}: ${esc(page.label)}"><img src="${esc(e.path)}" alt="Original production or research image: ${esc(page.label)}" loading="lazy"></button>`;
@@ -15,14 +15,14 @@ function nativeElement(e,i,page){
  return `<span class="element shape" aria-hidden="true" style="${boxStyle(e.box)}background:${e.fill||'transparent'};border:${e.outline?e.width+'px solid '+e.outline:'0'};border-radius:${e.type==='ellipse'?'50%':(e.radius||0)+'px'}"></span>`;
 }
 function resize(){document.querySelectorAll('.canvas-wrap').forEach(w=>{const scale=w.clientWidth/1600;w.style.height=1131*scale+'px';w.firstElementChild.style.transform=`scale(${scale})`;});}
-fetch('layout.json?v=editorial-3').then(r=>{if(!r.ok)throw Error('Content could not be loaded');return r.json();}).then(pages=>{
+fetch('layout.json?v=research-4').then(r=>{if(!r.ok)throw Error('Content could not be loaded');return r.json();}).then(pages=>{
  contents.innerHTML=pages.map((p,i)=>`<a href="#section-${i+1}">${String(i+1).padStart(2,'0')} / ${esc(p.label)}</a>`).join('');
  reading.innerHTML=pages.map((p,i)=>{
   const links=p.links.map(([label,url])=>`<a href="${esc(url)}" ${url.startsWith('#')?'':'target="_blank" rel="noopener"'}>${esc(label)} ↗</a>`).join('');
   let overlays=i===0?'<a class="native-source" style="left:108px;top:351px;width:289px;height:54px" href="#section-2" aria-label="Begin reading the project">BEGIN SHIFT</a>':'';
   const sourceHeads=p.elements.filter(e=>e.type==='text'&&e.text==='OPEN SOURCE  >');
   sourceHeads.forEach((e,j)=>{if(p.links[j])overlays+=`<a class="native-source" style="left:${e.x}px;top:${e.y}px;width:450px;height:36px" href="${esc(p.links[j][1])}" ${p.links[j][1].startsWith('#')?'':'target="_blank" rel="noopener"'} aria-label="${esc(p.links[j][0])}">OPEN SOURCE</a>`;});
-  const prev=i?`<a href="#section-${i}">← PREVIOUS</a>`:'';const next=i<12?`<a href="#section-${i+2}">NEXT →</a>`:`<a href="#section-1">RETURN ↑</a>`;
+  const prev=i?`<a href="#section-${i}">← PREVIOUS</a>`:'';const next=i<pages.length-1?`<a href="#section-${i+2}">NEXT →</a>`:`<a href="#section-1">RETURN ↑</a>`;
   return `<section class="folio" id="section-${i+1}" aria-label="${esc(p.label)}"><p class="mobile-label">${String(i+1).padStart(2,'0')} / ${esc(p.label)}</p><div class="canvas-wrap"><div class="canvas" style="background:${p.elements[0].fill}">${p.elements.map((e,j)=>nativeElement(e,j,p)).join('')}${overlays}<nav class="vn-nav" style="color:${p.elements.find(e=>e.type==='text').color}" aria-label="Section ${i+1} navigation">${prev}<a href="#" data-contents>CONTENTS</a><a href="#section-11">SOURCES</a>${next}</nav></div></div><div class="section-tail"><div class="citations">${links}</div><div class="chapter-move">${prev}${next}</div></div></section>`;
  }).join('');
  document.querySelectorAll('[data-art]').forEach(b=>b.onclick=()=>{zoom.querySelector('img').src=b.dataset.art;zoom.querySelector('img').alt=b.getAttribute('aria-label');zoom.querySelector('p').textContent=b.closest('section').getAttribute('aria-label');zoom.showModal();});
